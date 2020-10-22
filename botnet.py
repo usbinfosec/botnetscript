@@ -32,8 +32,7 @@ SCOPES = ['https://mail.google.com/']   #Modify scopes to restrict or increase a
 CLIENT_SECRET_PATH = '/home/abenchaita/botnet/credentials.json' #Credential files downloaded from Gmail Api console
 TOKEN = '/home/abenchaita/botnet/token.pickle'
 OUTPUT = '/home/abenchaita/botnet/output.csv'
-OUTPUT_TWO = '/home/abenchaita/botnet/output2.csv'
-REPORT ='2-onepage.pdf' 
+OUTPUT_TWO = '/home/abenchaita/botnet/output2.csv' 
 
 def get_service():			#This method authenticates to the gmail acount, first time requires user to click accept
     creds = None
@@ -139,7 +138,7 @@ def get_attachments(service, user_id, msg_id):
                     att = service.users().messages().attachments().get(userId=user_id, messageId=msg_id,id=att_id).execute()
                     data = att['data']
                 file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
-                path = part['filename']
+                path ='./'+ part['filename']
 
                 with open(path, 'wb') as f:
                     f.write(file_data)
@@ -229,15 +228,15 @@ def not_duplicate(user):
  	Output2.csv is saved in the local directory
 """
 
-def botnet(botnet):
+def botnet():
   titleNotWritten = True
   current_time = datetime.datetime.now()
-  tabula.convert_into("2-onepage.pdf", "foo.csv", stream = True, guess = False,  pages = "all")
+  tabula.convert_into("./2-onepage.pdf", "foo.csv", stream = True, guess = False,  pages = "all")
   with open('foo.csv', 'r') as f, open(OUTPUT,'w') as o:
       next(f)
       next(f)
       line = f.readline()
-      line = line[:10]+ ',' +line[11:25]+','+line[26:37]+','+line[38:52]+','+line[53:]
+      line = line[:10]+ ',' +line[11:25]+','+line[26:37]+','+line[38:52]+',Description'+'\n'
       o.write(line)
       for line in f:
           if ord(line[0]) > 57:
@@ -285,6 +284,6 @@ if __name__ == "__main__":
     messageId = ids[0].get('id') 
     get_attachments(service, 'me', messageId)
     add_label_to_email(service, 'me', messageId)
-    botnet(REPORT)
+    botnet()
 
 
